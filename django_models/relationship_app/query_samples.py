@@ -1,11 +1,10 @@
-import sys
 import os
 import django
+import sys
+
+# Setup Django environment for standalone script
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_models.settings')
-print("DJANGO_SETTINGS_MODULE:", os.environ.get('DJANGO_SETTINGS_MODULE'))
-
 django.setup()
 
 from relationship_app.models import Author, Book, Library, Librarian
