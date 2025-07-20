@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <title>List of Books</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Books Available:</h1>
     <ul>
-        {% for book in books %}
-        <li>{{ book.title }} by {{ book.author.name }}</li>
-        {% endfor %}
+      {% for book in books %}
+      <li>{{ book.title }} by {{ book.author.name }}</li>
+      {% endfor %}
     </ul>
-</body>
+  </body>
 </html>
