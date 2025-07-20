@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import list_books, LibraryDetailView, add_book_view
+from .views import list_books, LibraryDetailView, add_book_view, edit_book_view, delete_book_view
 from django.contrib.auth import views as auth_views
 from . import views
 
@@ -17,4 +17,8 @@ urlpatterns = [
     path('books/<int:pk>/delete/', views.delete_book, name='delete_book'),
     path('books/', views.book_list, name='book_list'),  # You can add a list view if needed
     path('add-book/', add_book_view, name='add_book'),
+    path('add_book/', add_book_view, name='add_book'),
+    path('edit_book/<int:pk>/', edit_book_view, name='edit_book'),
+    path('delete_book/<int:pk>/', delete_book_view, name='delete_book'),  # optional if you're doing deletion too
+
 ]
