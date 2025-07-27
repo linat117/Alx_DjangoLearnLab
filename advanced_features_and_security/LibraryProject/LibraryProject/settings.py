@@ -23,7 +23,27 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-_8*@to725$ad%x_9$n61$!!=_yu+=f3_(ol^bsgyah7+1v0v6('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False  # Never use True in production
+
+# Prevent MIME-type sniffing
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Prevent clickjacking
+X_FRAME_OPTIONS = 'DENY'
+
+# Enable browser XSS protection
+SECURE_BROWSER_XSS_FILTER = True
+
+# CSRF and session cookies sent only over HTTPS
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# Use secure referrer policy
+SECURE_REFERRER_POLICY = "strict-origin"
+
+# Add CSP middleware if installed (Step 4)
+# 'csp.middleware.CSPMiddleware'  <-- Added to MIDDLEWARE
+
 
 ALLOWED_HOSTS = []
 
@@ -46,6 +66,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bookshelf',
     'relationship_app',
+    'csp',
 ]
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
@@ -57,8 +78,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware', 
 ]
-
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'", 'fonts.googleapis.com')  # if using external fonts
+CSP_SCRIPT_SRC = ("'self'",)
 ROOT_URLCONF = 'LibraryProject.urls'
 
 TEMPLATES = [
