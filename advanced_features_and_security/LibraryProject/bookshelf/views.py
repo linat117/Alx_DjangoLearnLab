@@ -6,7 +6,7 @@ from django.http import HttpResponseForbidden
 from django.db.models import Q
 from .forms import BookForm
 from django.contrib.auth.decorators import permission_required
-
+from .forms import ExampleForm
 
 
 @permission_required('bookshelf.can_view', raise_exception=True)
@@ -75,3 +75,19 @@ def book_edit(request, pk):
         form = BookForm(instance=book)
 
     return render(request, 'bookshelf/book_form.html', {'form': form})
+
+
+
+
+def example_view(request):
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Process form data securely
+            cleaned_data = form.cleaned_data
+            # (save, email, log, etc.)
+            return redirect('success_url')
+    else:
+        form = ExampleForm()
+
+    return render(request, 'bookshelf/form_example.html', {'form': form})
