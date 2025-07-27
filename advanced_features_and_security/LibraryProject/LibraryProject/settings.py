@@ -40,6 +40,18 @@ SESSION_COOKIE_SECURE = True
 
 # Use secure referrer policy
 SECURE_REFERRER_POLICY = "strict-origin"
+# Redirect all HTTP requests to HTTPS
+SECURE_SSL_REDIRECT = True
+
+# HTTP Strict Transport Security (HSTS)
+# Tell browsers to only connect via HTTPS for 1 year (31536000 seconds)
+SECURE_HSTS_SECONDS = 31536000
+
+# Apply HSTS policy to all subdomains
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+# Allow site to be included in browser preload list (optional but recommended)
+SECURE_HSTS_PRELOAD = True
 
 # Add CSP middleware if installed (Step 4)
 # 'csp.middleware.CSPMiddleware'  <-- Added to MIDDLEWARE
