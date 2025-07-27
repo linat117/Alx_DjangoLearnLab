@@ -56,6 +56,8 @@ SECURE_HSTS_PRELOAD = True
 # Add CSP middleware if installed (Step 4)
 # 'csp.middleware.CSPMiddleware'  <-- Added to MIDDLEWARE
 
+# Tell Django to trust the X-Forwarded-Proto header for HTTPS detection
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 ALLOWED_HOSTS = []
 
