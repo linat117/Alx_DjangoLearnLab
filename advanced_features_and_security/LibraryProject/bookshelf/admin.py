@@ -4,8 +4,8 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display=('title', 'author', 'publication_year')
-    list_filter = ('publication_year', 'author')
+    list_display=('title', 'author', 'published_date')
+    list_filter = ('published_date', )
     search_fields = ('title','author')
 
 

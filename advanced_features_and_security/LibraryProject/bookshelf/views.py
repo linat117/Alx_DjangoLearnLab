@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Document
+from .models import Document, Book
 from django.http import HttpResponseForbidden
 
 @permission_required('bookshelf.can_view', raise_exception=True)
@@ -32,3 +32,8 @@ def document_delete(request, pk):
     document = get_object_or_404(Document, pk=pk)
     document.delete()
     return redirect('document_list')
+
+@permission_required('bookshelf.can_view', raise_exception=True)
+def book_list(request):
+    books = Book.objects.all()
+    return render(request, 'bookshelf/book_list.html', {'books': books})
