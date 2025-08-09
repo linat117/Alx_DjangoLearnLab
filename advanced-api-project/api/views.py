@@ -1,56 +1,38 @@
-from rest_framework import generics
+from rest_framework import generics, filters
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Book
 from .serializers import BookSerializer
 
 """
 Views for Book model using Django REST Framework generic views.
 
-We provide:
-- BookListView   -> GET /api/books/                      (read for all)
-- BookDetailView -> GET /api/books/<pk>/                 (read for all)
-- BookCreateView -> POST /api/books/create/              (authenticated only)
-- BookUpdateView -> PUT/PATCH /api/books/update/<pk>/    (authenticated only)
-- BookDeleteView -> DELETE /api/books/delete/<pk>/       (authenticated only)
+Enhancements in BookListView:
+- Filtering by title, author name, and publication_year using DjangoFilterBackend.
+- Searching in title and author name using SearchFilter.
+- Ordering by title, publication_year, or author name using OrderingFilter.
 
 Permissions:
 - List & Detail: accessible by anyone (read-only).
 - Create / Update / Delete: restricted to authenticated users.
-
-Additional behaviour:
-- BookListView supports optional filtering by publication_year or author name/ID.
 """
 
 class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]  # read for all
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        qp = self.request.query_params
-
-        # Filter by publication_year if provided
-        year = qp.get('publication_year')
-        if year and year.isdigit():
-            queryset = queryset.filter(publication_year=int(year))
-
-        # Filter by author (id or name)
-        author = qp.get('author')
-        if author:
-            if author.isdigit():
-                queryset = queryset.filter(author__id=int(author))
-            else:
-                queryset = queryset.filter(author__name__icontains=author)
-
-        return queryset
-
+    # Filtering, Searching, Ordering Configurations
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['title', 'author__name', 'publication_year']  # Filtering
+    search_fields = ['title', 'author__name']  # Searching
+    ordering_fields = ['title', 'publication_year', 'author__name']  # Ordering
+    ordering = ['title']  # Default ordering
 
 class BookDetailView(generics.RetrieveAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-
 
 class BookCreateView(generics.CreateAPIView):
     queryset = Book.objects.all()
@@ -60,7 +42,6 @@ class BookCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save()
 
-
 class BookUpdateView(generics.UpdateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
@@ -68,7 +49,6 @@ class BookUpdateView(generics.UpdateAPIView):
 
     def perform_update(self, serializer):
         serializer.save()
-
 
 class BookDeleteView(generics.DestroyAPIView):
     queryset = Book.objects.all()
