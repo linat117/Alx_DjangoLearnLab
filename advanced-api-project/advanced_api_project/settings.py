@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'rest_framework',
-    'django-filters',
+    'django_filters',
 ]
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
