@@ -132,21 +132,20 @@ class PostByTagListView(ListView):
         return context 
     
 @login_required
-def add_comment(request, post_id):
-    post = get_object_or_404(Post, pk=post_id)
-    if request.method == "POST":
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = post
-            comment.author = request.user
-            comment.save()
-            messages.success(request, "Comment added successfully!")
-            return redirect('post-detail', pk=post.id)
-    else:
-        form = CommentForm()
-    return render(request, 'comment_form.html', {'form': form})
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'comment_form.html'
 
+    def form_valid(self, form):
+        post_id = self.kwargs.get('post_id')
+        post = Post.objects.get(pk=post_id)
+        form.instance.author = self.request.user
+        form.instance.post = post
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return self.object.post.get_absolute_url()
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Comment
     form_class = CommentForm
