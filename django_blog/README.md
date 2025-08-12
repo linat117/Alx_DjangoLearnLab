@@ -20,3 +20,21 @@
 - Only authenticated users can create posts.
 - Only the post’s author can edit or delete it.
 - All posts are visible to everyone.
+
+
+## Comment System
+
+### Features
+- View all comments on a post
+- Add comments (login required)
+- Edit or delete own comments
+- Comments show creation & update timestamps
+
+### Permissions
+- Only authenticated users can comment
+- Only comment author can edit/delete their comment
+
+### URLs
+- `/posts/<post_id>/comments/new/` — Add comment
+- `/comments/<id>/edit/` — Edit comment
+- `/comments/<id>/delete/` — Delete comment
