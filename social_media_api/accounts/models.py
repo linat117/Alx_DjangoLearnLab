@@ -7,11 +7,11 @@ def profile_upload_path(instance, filename):
 class User(AbstractUser):
     bio = models.TextField(blank= True)
     profile_picture = models.ImageField(upload_to = profile_upload_path, blank= True)
-    followers = models.ManyToManyField(
-        "self", 
+    following = models.ManyToManyField(
+        "self",
         symmetrical=False,
-        related_name="following",
+        related_name="followers",  # reverse side: who follows me
         blank=True,
-    ) 
+    )
     def __str__(self):
         return self.username

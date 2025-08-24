@@ -81,3 +81,25 @@ GET /api/comments/{id}/
 PATCH /api/comments/{id}/ (owner)
 
 DELETE /api/comments/{id}/ (owner)
+
+## Follows & Feed
+
+### Follow / Unfollow
+- `POST /api/accounts/follow/<user_id>/` — follow a user (auth)
+- `POST /api/accounts/unfollow/<user_id>/` — unfollow a user (auth)
+
+**Headers:** `Authorization: Token <TOKEN>`
+
+### Feed
+- `GET /api/feed/` — posts from users you follow, newest first (auth)
+- Pagination via `?page=N`
+
+### Model Changes
+- Custom `User` has:
+  - `following = ManyToManyField("self", symmetrical=False, related_name="followers", blank=True)`
+  - Reverse: `user.followers.all()`
+
+### Example
+1. User A follows User B: `POST /api/accounts/follow/2/`
+2. User B creates a post.
+3. User A fetches feed: `GET /api/feed/` → sees B’s new post.

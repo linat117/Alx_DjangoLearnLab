@@ -6,6 +6,6 @@ from .models import User
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
     fieldsets = BaseUserAdmin.fieldsets + (
-        ("Profile", {"fields": ("bio", "profile_picture", "followers")}),
+        ("Profile", {"fields": ("bio", "profile_picture", "following")}),
     )
-    filter_horizontal = ("followers",)
+    filter_horizontal = ("following",)

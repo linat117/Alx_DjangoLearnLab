@@ -3,11 +3,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.authtoken.models import Token
-
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
 from .serializers import (
     UserRegistrationSerializer, UserLoginSerializer,
-    UserSerializer, UserProfileSerializer
+    UserSerializer, UserProfileSerializer, FollowInfoSerializer, UserMiniSerializer
 )
+User = get_user_model()
 
 class RegisterView(APIView):
     def post(self, request):
@@ -48,3 +50,39 @@ class ProfileView(APIView):
             user = serializer.save()
             return Response(UserSerializer(user, context={"request": request}).data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class FollowUserView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, user_id):
+        target = get_object_or_404(User, id=user_id)
+        if target == request.user:
+            return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+        request.user.following.add(target)
+        request.user.save()
+        return Response(
+            {
+                "detail": f"Now following {target.username}.",
+                "me": FollowInfoSerializer(request.user).data,
+                "target": UserMiniSerializer(target).data,
+            },
+            status=status.HTTP_200_OK
+        )
+
+class UnfollowUserView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, user_id):
+        target = get_object_or_404(User, id=user_id)
+        if target == request.user:
+            return Response({"detail": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+        request.user.following.remove(target)
+        request.user.save()
+        return Response(
+            {
+                "detail": f"Unfollowed {target.username}.",
+                "me": FollowInfoSerializer(request.user).data,
+                "target": UserMiniSerializer(target).data,
+            },
+            status=status.HTTP_200_OK
+        )

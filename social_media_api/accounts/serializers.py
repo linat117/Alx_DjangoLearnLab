@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email']  # adjust fields
-        
+
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
@@ -50,3 +50,22 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'bio', 'profile_picture']
         read_only_fields = ['id', 'username', 'email']
+
+class UserMiniSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username"]
+
+class FollowInfoSerializer(serializers.ModelSerializer):
+    followers_count = serializers.IntegerField(source="followers.count", read_only=True)
+    following_count = serializers.IntegerField(source="following.count", read_only=True)
+    followers = UserMiniSerializer(many=True, read_only=True)
+    following = UserMiniSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            "id", "username", "followers_count", "following_count",
+            "followers", "following",
+        ]
+        read_only_fields = fields

@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions, filters
+from rest_framework import viewsets, permissions, filters, generics
 from rest_framework.authentication import TokenAuthentication
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
@@ -41,3 +41,16 @@ class CommentViewSet(viewsets.ModelViewSet):
         ctx = super().get_serializer_context()
         ctx["request"] = self.request
         return ctx
+
+class FeedView(generics.ListAPIView):
+    """
+    Returns posts from users the current user follows.
+    Most recent first. Requires authentication.
+    """
+    serializer_class = PostSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        following_ids = self.request.user.following.values_list("id", flat=True)
+        return Post.objects.filter(author_id__in=following_ids).order_by("-created_at")
