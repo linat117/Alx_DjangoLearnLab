@@ -37,12 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-      # Third-party
     "rest_framework",
     "rest_framework.authtoken",
-
-    # Local
     "accounts",
+    "posts",
+    
 ]
 
 MIDDLEWARE = [
@@ -141,4 +140,6 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
     ],
+     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,  # pagination for list endpoints
 }
