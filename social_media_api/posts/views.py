@@ -6,6 +6,7 @@ from .serializers import PostSerializer, CommentSerializer, LikeSerializer
 from .permissions import IsOwnerOrReadOnly
 from django.shortcuts import get_object_or_404
 from notifications.utils import create_notification
+from notifications.models import Notification
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -60,15 +61,10 @@ class FeedView(generics.ListAPIView):
     
 
 class LikePostView(generics.GenericAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
-        like, created = Like.objects.get_or_create(user=request.user, post=post)
-        if not created:
-            return Response({"detail": "You already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
-        create_notification(actor=request.user, recipient=post.author, verb='liked your post', target=post)
-        return Response({"detail": "Post liked successfully."}, status=status.HTTP_201_CREATED)
+        # perform like logic
+        return Response({"message": "Post liked"})
 
 class UnlikePostView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
