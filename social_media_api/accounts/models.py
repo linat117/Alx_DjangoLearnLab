@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 def profile_upload_path(instance, filename):
     return f"Profile_pictures/user_{instance.id}/{filename}" 
 
-class User(AbstractUser):
+class CustomUser(AbstractUser):
     bio = models.TextField(blank= True)
     profile_picture = models.ImageField(upload_to = profile_upload_path, blank= True)
     following = models.ManyToManyField(
