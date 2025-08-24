@@ -59,32 +59,28 @@ class FeedView(generics.ListAPIView):
         # Filter posts by those users and order by newest first
         return Post.objects.filter(author__in=following_users).order_by('-created_at')
     
-
 class LikePostView(generics.GenericAPIView):
     def post(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
+        post = generics.get_object_or_404(Post, pk=pk)
 
         like, created = Like.objects.get_or_create(user=request.user, post=post)
-        if not created:
-            return Response({"detail": "Already liked"}, status=status.HTTP_400_BAD_REQUEST)
-
-        Notification.objects.create(
-            recipient=post.author,
-            sender=request.user,
-            post=post,
-            notification_type="like"
-        )
-
-        return Response({"detail": "Post liked"}, status=status.HTTP_201_CREATED)
+        if created:
+            Notification.objects.create(
+                recipient=post.author,
+                sender=request.user,
+                post=post,
+                notification_type="like"
+            )
+            return Response({"detail": "Post liked"}, status=status.HTTP_201_CREATED)
+        return Response({"detail": "Already liked"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UnlikePostView(generics.GenericAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-
     def post(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
+        post = generics.get_object_or_404(Post, pk=pk)
         like = Like.objects.filter(user=request.user, post=post).first()
+
         if like:
             like.delete()
-            return Response({"detail": "Post unliked successfully."}, status=status.HTTP_200_OK)
-        return Response({"detail": "You haven't liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Post unliked"}, status=status.HTTP_200_OK)
+        return Response({"detail": "You haven't liked this post"}, status=status.HTTP_400_BAD_REQUEST)
