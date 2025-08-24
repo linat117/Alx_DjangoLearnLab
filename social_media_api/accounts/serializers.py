@@ -2,30 +2,26 @@ from django.contrib.auth import authenticate, get_user_model
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 
-# Always assign the model to a variable with capitalized name
 User = get_user_model()
-
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password', 'bio', 'profile_picture']
-        read_only_fields = ['id']
+        fields = ['username', 'email', 'password', 'bio', 'profile_picture']
 
     def create(self, validated_data):
-        # Correct case-sensitive usage of create_user
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email', ''),
             password=validated_data['password'],
             bio=validated_data.get('bio', ''),
-            profile_picture=validated_data.get('profile_picture', None),
+            profile_picture=validated_data.get('profile_picture', None)
         )
-        # Generate token immediately
         Token.objects.create(user=user)
         return user
+
 
 
 class UserLoginSerializer(serializers.Serializer):
