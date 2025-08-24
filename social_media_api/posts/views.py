@@ -5,7 +5,7 @@ from .serializers import PostSerializer, CommentSerializer
 from .permissions import IsOwnerOrReadOnly
 
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.select_related("author").all()
+    queryset = Post.objects.all()
     serializer_class = PostSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
@@ -21,7 +21,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.select_related("author", "post").all()
+    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
